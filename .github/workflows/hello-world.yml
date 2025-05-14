@@ -1,0 +1,25 @@
+name: Hello World (Test Concurrency)
+
+on:
+  push:
+    branches:
+      - main
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Say Hello
+        run: echo "Hello from ${{ github.event_name }} at $(date)"
+
+      - name: Sleep (simulate long job)
+        run: sleep 60
+
+      - name: Done
+        run: echo "Done at $(date)"
